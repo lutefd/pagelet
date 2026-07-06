@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Warm abstract park scene">
+  <rect width="900" height="600" fill="#eef1e6"/>
+  <circle cx="220" cy="240" r="120" fill="#77916f"/>
+  <circle cx="390" cy="210" r="150" fill="#9bad7f"/>
+  <circle cx="620" cy="250" r="110" fill="#6d8f86"/>
+  <path d="M90 455c130-80 240-70 370 0s230 72 350-10" fill="none" stroke="#b9815c" stroke-width="42" stroke-linecap="round"/>
+</svg>
