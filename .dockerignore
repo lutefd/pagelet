@@ -1,0 +1,8 @@
+.git
+.pnpm-data
+.svelte-kit
+build
+node_modules
+.env
+coverage
+dist

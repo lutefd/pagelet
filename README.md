@@ -94,6 +94,32 @@ docker run --rm -p 3000:3000 pagelet
 
 ## Cloudflared Deployment
 
+For a personal home server, the recommended setup is to run `cloudflared` as
+server-level infrastructure, either with systemd or a separate server-wide Docker
+Compose stack. That lets one tunnel route multiple apps and keeps Pagelet restarts
+from affecting the tunnel.
+
+Build and run Pagelet on the server:
+
+```sh
+docker build -t pagelet .
+docker run -d --name pagelet --restart unless-stopped -p 3000:3000 pagelet
+```
+
+Then configure a Cloudflare Tunnel public hostname to route to:
+
+```txt
+http://127.0.0.1:3000
+```
+
+If Pagelet and cloudflared share a Docker network, route to:
+
+```txt
+http://pagelet:3000
+```
+
+### Optional Project-Local Tunnel
+
 Create a Cloudflare Tunnel token in the Cloudflare dashboard, then copy `.env.example`
 to `.env` and set:
 
