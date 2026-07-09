@@ -21,7 +21,7 @@
   <a class="back-link" href="/">Pagelet</a>
 
   <article class="document">
-    {#each data.page.blocks as block}
+    {#each data.page.blocks as block, index}
       {#if block.kind === 'html'}
         <div class="markdown-body">
           {@html block.html}
@@ -35,7 +35,7 @@
       {:else if block.name === 'gallery'}
         <Gallery {...(block.props as any)} />
       {:else if block.name === 'checklist'}
-        <Checklist {...(block.props as any)} />
+        <Checklist {...(block.props as any)} storageKey={`pagelet:${data.page.slug}:checklist:${index}`} />
       {:else if block.name === 'timeline'}
         <Timeline {...(block.props as any)} />
       {:else}
