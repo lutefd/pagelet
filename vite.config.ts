@@ -3,6 +3,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [sveltekit()],
+  server: {
+    allowedHosts: ['lutehmserver']
+  },
   test: {
     environment: 'jsdom',
     include: ['tests/**/*.test.ts']
