@@ -11,7 +11,6 @@
 <main class="error-page">
   <a class="wordmark error-wordmark" href="/"><span aria-hidden="true">p.</span> Pagelet</a>
   <div class="error-doodle error-doodle-one" aria-hidden="true">?</div>
-  <div class="error-doodle error-doodle-two" aria-hidden="true">{faces[page.status] ?? '(•́  ‿ ,•̀)'}</div>
 
   <section class="error-card">
     <p class="eyebrow"><span></span> HTTP {page.status}. Rude.</p>
@@ -27,4 +26,5 @@
       <button class="button button-quiet" type="button" onclick={() => history.back()}>Go back one tiny step</button>
     </div>
   </section>
+  <div class="error-doodle error-doodle-two" aria-hidden="true">{faces[page.status] ?? '(•́  ‿ ,•̀)'}</div>
 </main>
