@@ -1,9 +1,3 @@
-<script lang="ts">
-  import type { PageData } from './$types';
-
-  let { data }: { data: PageData } = $props();
-</script>
-
 <svelte:head>
   <title>Pagelet — Markdown, but make it shareable</title>
   <meta
@@ -40,7 +34,7 @@
         </p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="#published">See what’s out there <span>↓</span></a>
+          <a class="button button-primary" href="/pages">See what’s out there <span>↗</span></a>
           <a class="button button-quiet" href="/openapi.json">OpenAPI, if you insist ↗</a>
         </div>
       </div>
@@ -84,36 +78,6 @@
         <span class="step-sticker sticker-green" aria-hidden="true">↗</span>
       </li>
     </ol>
-  </section>
-
-  <section class="landing-section published-section" id="published">
-    <div class="section-heading published-heading">
-      <div>
-        <p class="eyebrow"><span></span> Fresh from the Markdown oven</p>
-        <h2>Published <em>pagelets.</em></h2>
-      </div>
-      <p>Small documents living their best public lives.</p>
-    </div>
-
-    {#if data.pages.length}
-      <div class="page-list">
-        {#each data.pages as page, index}
-          <a class="page-card" href="/{page.slug}">
-            <span class="page-card-index">{String(index + 1).padStart(2, '0')}</span>
-            <span class="page-card-copy">
-              <strong>{page.title}</strong>
-              {#if page.description}<small>{page.description}</small>{/if}
-            </span>
-            <span class="page-card-arrow" aria-hidden="true">↗</span>
-          </a>
-        {/each}
-      </div>
-    {:else}
-      <div class="empty-pagelet">
-        <span aria-hidden="true">( •_•)</span>
-        <div><h3>Awkward. The shelf is empty.</h3><p>Publish the first Pagelet and become extremely historically important.</p></div>
-      </div>
-    {/if}
   </section>
 
   <footer class="landing-footer">
