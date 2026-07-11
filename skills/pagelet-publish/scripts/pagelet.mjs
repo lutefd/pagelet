@@ -2,6 +2,9 @@
 
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { loadEnvFile } from 'node:process';
+
+loadLocalEnvironment();
 
 const origin = (process.env.PAGELET_ORIGIN ?? 'https://pages.luisdourado.com').replace(/\/$/, '');
 const [command, ...args] = process.argv.slice(2);
@@ -77,4 +80,16 @@ function usage(exitCode) {
   pagelet.mjs get <slug>
   pagelet.mjs delete <slug>`);
   process.exit(exitCode);
+}
+
+function loadLocalEnvironment() {
+  const path = process.env.PAGELET_ENV_FILE ?? '.env';
+  try {
+    // Node parses dotenv syntax without executing the file as shell code. Existing
+    // environment variables take precedence over values loaded from the file.
+    loadEnvFile(path);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') return;
+    throw error;
+  }
 }

@@ -14,9 +14,12 @@ npx skills add lutefd/pagelet --skill pagelet-publish
 ```
 
 The installer prompts for the target agent and project/global scope. Configure
-`PAGELET_API_KEY` in that agent's secret or environment settings; do not paste it into a
-prompt or commit it to a project. The skill defaults to `https://pages.luisdourado.com`.
-Set `PAGELET_ORIGIN` alongside the key to use a different Pagelet installation.
+`PAGELET_API_KEY` in that agent's secret settings or an ignored, mode-`0600` `.env` file;
+do not paste it into a prompt or commit it. The client parses `.env` from the working
+directory without executing it, and existing process environment variables take
+precedence. Set `PAGELET_ENV_FILE` to select another dotenv file. The skill defaults to
+`https://pages.luisdourado.com`; set `PAGELET_ORIGIN` alongside the key to use another
+Pagelet installation.
 
 After installation, ask the agent naturally, for example:
 

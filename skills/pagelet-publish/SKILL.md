@@ -9,9 +9,15 @@ Turn user content into valid Pagelet Markdown, preview the source with the user 
 
 ## Configure access
 
-Require `PAGELET_API_KEY` in the agent's environment. Default to `https://pages.luisdourado.com`; honor `PAGELET_ORIGIN` when set for another installation.
+Require `PAGELET_API_KEY`. The bundled client first honors the agent process environment,
+then parses `.env` in the current working directory without executing it as shell code.
+Set `PAGELET_ENV_FILE` to use a different dotenv file. Default to
+`https://pages.luisdourado.com`; honor `PAGELET_ORIGIN` when set for another installation.
 
-Never ask the user to paste an API key into chat, embed it in Markdown, write it into a repository, or print it in command output. If the key is missing, tell the user to configure `PAGELET_API_KEY` in their agent's secret/environment settings and stop before publishing.
+Never ask the user to paste an API key into chat, embed it in Markdown, write it into a
+tracked file, or print it in command output. Accept an ignored, mode-`0600` `.env` file for
+local use. If the key is missing, tell the user to configure `PAGELET_API_KEY` in their
+agent's secret settings or ignored `.env` and stop before publishing.
 
 ## Compose the page
 
