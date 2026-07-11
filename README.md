@@ -155,6 +155,9 @@ sudo stat /etc/pagelet/cloudflared-token
 The file should be owned by `root`, with mode `0600`. Compose mounts it read-only inside
 the `cloudflared` container at `/run/secrets/cloudflared_token`; `cloudflared` reads it via
 `--token-file`, so the token does not appear in the container command or environment.
+File-backed Compose secrets preserve the host file's ownership, so the cloudflared
+container runs as container root to read it. Its filesystem remains read-only, all Linux
+capabilities are dropped, and `no-new-privileges` remains enabled.
 
 For a simpler but less secure setup, `docker-compose.yml` includes a commented alternative
 that reads `CLOUDFLARED_TOKEN` from `.env`. To use it, follow the comments in the

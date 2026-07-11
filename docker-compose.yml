@@ -33,6 +33,9 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
+    # File-backed Compose secrets preserve the host's 0600 root ownership. Run as
+    # container root only to read that file; capabilities remain fully dropped below.
+    user: "0:0"
     depends_on:
       pagelet:
         condition: service_healthy
