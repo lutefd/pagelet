@@ -2,12 +2,54 @@ services:
   pagelet:
     build: .
     restart: unless-stopped
+    init: true
+    environment:
+      PAGELET_API_KEY: ${PAGELET_API_KEY:?set PAGELET_API_KEY in .env}
+      DATABASE_PATH: /app/data/pagelet.sqlite
+      ORIGIN: ${PAGELET_ORIGIN:?set PAGELET_ORIGIN in .env}
+      HOST: 0.0.0.0
+      PORT: 3000
+      BODY_SIZE_LIMIT: 2M
     expose:
       - "3000"
+    volumes:
+      - pagelet-data:/app/data
+    networks:
+      - pagelet-internal
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     depends_on:
-      - pagelet
+      pagelet:
+        condition: service_healthy
     command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
+    networks:
+      - pagelet-internal
+      - tunnel-egress
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  pagelet-data:
+
+networks:
+  pagelet-internal:
+    internal: true
+  tunnel-egress:

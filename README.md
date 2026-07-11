@@ -1,8 +1,8 @@
 # Pagelet
 
-Pagelet is a small personal publishing platform for turning Markdown files into polished,
-shareable static pages. Markdown stays the source of truth, with a controlled set of
-prebuilt Svelte components available through shortcodes.
+Pagelet is a small publishing service for turning Markdown into polished, shareable pages.
+Agents can publish through a self-describing HTTP API, while Markdown stays the source of
+truth and SQLite provides durable runtime storage.
 
 ## Write a Page
 
@@ -57,6 +57,36 @@ Short description.
 
 Unknown components or invalid props fail during development/build.
 
+## Agent Publishing API
+
+Point an agent at `https://your-pagelet.example/llms.txt` or
+`https://your-pagelet.example/openapi.json`. Machine-readable discovery is also available
+at `/.well-known/pagelet.json`.
+
+Writes use `Authorization: Bearer <PAGELET_API_KEY>`. The main operations are:
+
+- `POST /api/v1/pagelets` — publish a new pagelet; optionally provide a slug
+- `PUT /api/v1/pagelets/{slug}` — create or replace a known slug
+- `GET /api/v1/pagelets/{slug}` — read metadata and Markdown source
+- `DELETE /api/v1/pagelets/{slug}` — delete a pagelet
+
+The JSON body is `{"markdown":"...","slug":"optional"}`. Agents may instead send raw
+`text/markdown` and use `X-Pagelet-Slug` on POST. Markdown must include frontmatter with a
+`title`. POST supports `Idempotency-Key`, which agents should set to a unique value so a
+retry cannot create a duplicate publication.
+
+Example payload:
+
+```json
+{
+  "slug": "release-notes",
+  "markdown": "---\ntitle: Release Notes\ndescription: What changed\n---\n\n# Version 1\n\nShipped."
+}
+```
+
+Successful responses include the public `url` to share. Invalid frontmatter, unsupported
+components, and unsafe slugs return structured JSON errors before anything is stored.
+
 ## Local Development
 
 ```sh
@@ -72,9 +102,10 @@ pnpm test
 pnpm build
 ```
 
-The static build is written to `build/`.
+The Node server build is written to `build/`. For local API testing, set `PAGELET_API_KEY`
+and optionally `DATABASE_PATH` (defaults to `data/pagelet.sqlite`).
 
-## Serve the Static Build
+## Serve the Production Build
 
 ```sh
 pnpm build
@@ -92,49 +123,36 @@ docker build -t pagelet .
 docker run --rm -p 3000:3000 pagelet
 ```
 
-## Cloudflared Deployment
+## Production Deployment with Cloudflare Tunnel
 
-For a personal home server, the recommended setup is to run `cloudflared` as
-server-level infrastructure, either with systemd or a separate server-wide Docker
-Compose stack. That lets one tunnel route multiple apps and keeps Pagelet restarts
-from affecting the tunnel.
+The Compose stack intentionally publishes no host ports. Pagelet sits on an internal
+Docker network and only its paired `cloudflared` container can reach it. The tunnel has a
+separate egress network so it can connect to Cloudflare without placing Pagelet on that
+network.
 
-Build and run Pagelet on the server:
-
-```sh
-docker build -t pagelet .
-docker run -d --name pagelet --restart unless-stopped -p 3000:3000 pagelet
-```
-
-Then configure a Cloudflare Tunnel public hostname to route to:
-
-```txt
-http://127.0.0.1:3000
-```
-
-If Pagelet and cloudflared share a Docker network, route to:
-
-```txt
-http://pagelet:3000
-```
-
-### Optional Project-Local Tunnel
-
-Create a Cloudflare Tunnel token in the Cloudflare dashboard, then copy `.env.example`
-to `.env` and set:
+In Cloudflare Zero Trust, create a remotely managed tunnel and add exactly one public
+hostname whose service is `http://pagelet:3000`. Copy `.env.example` to `.env` and set:
 
 ```sh
 CLOUDFLARED_TOKEN=your-token
+PAGELET_API_KEY=a-long-random-publishing-secret
+PAGELET_ORIGIN=https://pages.example.com
 ```
 
-Start the app and tunnel:
+Generate the API key with a password manager or `openssl rand -hex 32`. Then deploy:
 
 ```sh
 docker compose up -d --build
 ```
 
-Configure the tunnel's public hostname in Cloudflare to route to:
+Check the health endpoint and logs through Docker:
 
-```txt
-http://pagelet:3000
+```sh
+docker compose ps
+docker compose logs --tail=100 pagelet cloudflared
 ```
+
+The named `pagelet-data` volume holds the SQLite database. Back it up while the service is
+stopped, or use SQLite's online backup tooling. Never expose port 3000 with a Compose
+`ports` entry; all public traffic should enter through the tunnel. Rotate both the tunnel
+token and publishing key if either is disclosed.
