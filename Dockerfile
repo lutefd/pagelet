@@ -21,6 +21,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 
 COPY --from=build /app/build ./build
+COPY --from=build /app/content ./content
 
 RUN mkdir -p /app/data && chown -R node:node /app
 
