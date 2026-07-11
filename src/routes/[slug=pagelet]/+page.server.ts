@@ -8,7 +8,5 @@ export async function load({ params }) {
     error(404, 'Page not found');
   }
 
-  return {
-    page
-  };
+  return { page };
 }

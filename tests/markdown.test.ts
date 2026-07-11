@@ -1,17 +1,25 @@
 import { describe, expect, it } from 'vitest';
 import { renderMarkdownDocument } from '../src/lib/markdown/render';
-import { loadPage } from '../src/lib/markdown/pages';
+import { parsePageSource } from '../src/lib/markdown/pages';
 
 describe('Markdown rendering', () => {
-  it('loads frontmatter metadata and renders Markdown HTML', async () => {
-    const page = await loadPage('sao-paulo-saturday-plan');
+  it('parses frontmatter metadata and renders Markdown HTML', async () => {
+    const source = parsePageSource(`---
+title: Example Page
+description: A small example
+theme: default
+---
 
-    expect(page?.meta).toMatchObject({
-      title: 'Sao Paulo Saturday Plan',
-      description: 'A small guide for food, walking, and music',
+# Hello, Pagelet
+`);
+    const blocks = await renderMarkdownDocument(source.body);
+
+    expect(source.meta).toMatchObject({
+      title: 'Example Page',
+      description: 'A small example',
       theme: 'default'
     });
-    expect(page?.blocks.some((block) => block.kind === 'html' && block.html.includes('<h1>'))).toBe(true);
+    expect(blocks.some((block) => block.kind === 'html' && block.html.includes('<h1>'))).toBe(true);
   });
 
   it('parses registered shortcode blocks', async () => {
