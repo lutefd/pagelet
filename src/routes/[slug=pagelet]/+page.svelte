@@ -9,6 +9,8 @@
   import Event from '$lib/components/markdown/Event.svelte';
   import Spotify from '$lib/components/markdown/Spotify.svelte';
   import YouTube from '$lib/components/markdown/YouTube.svelte';
+  import Button from '$lib/components/markdown/Button.svelte';
+  import Details from '$lib/components/markdown/Details.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -50,6 +52,10 @@
         <Spotify {...(block.props as any)} />
       {:else if block.name === 'youtube'}
         <YouTube {...(block.props as any)} />
+      {:else if block.name === 'button'}
+        <Button {...(block.props as any)} />
+      {:else if block.name === 'details'}
+        <Details {...(block.props as any)} />
       {:else}
         <p class="component-error">Unknown component: {block.name}</p>
       {/if}

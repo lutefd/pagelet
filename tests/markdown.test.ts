@@ -120,6 +120,36 @@ theme: default
     );
   });
 
+  it('parses button and details components', async () => {
+    const blocks = await renderMarkdownDocument(`
+::button{href="https://example.com/tickets" variant="secondary"}
+Buy tickets
+::
+
+::details{title="Accessibility" open="true"}
+The venue has step-free access.
+::
+`);
+
+    expect(blocks).toMatchObject([
+      {
+        kind: 'component',
+        name: 'button',
+        props: { href: 'https://example.com/tickets', variant: 'secondary', label: 'Buy tickets' }
+      },
+      {
+        kind: 'component',
+        name: 'details',
+        props: { title: 'Accessibility', open: true, content: 'The venue has step-free access.' }
+      }
+    ]);
+  });
+
+  it('applies the primary button default', async () => {
+    const blocks = await renderMarkdownDocument(`::button{href="https://example.com"}\nVisit site\n::`);
+    expect(blocks[0]).toMatchObject({ props: { variant: 'primary' } });
+  });
+
   it('rejects invalid component props', async () => {
     await expect(renderMarkdownDocument(`::callout{type="loud"}\nListen.\n::`)).rejects.toThrow(
       'Invalid props for ::callout'

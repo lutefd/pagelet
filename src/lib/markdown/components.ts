@@ -9,6 +9,8 @@ import Map from '$lib/components/markdown/Map.svelte';
 import Event from '$lib/components/markdown/Event.svelte';
 import Spotify from '$lib/components/markdown/Spotify.svelte';
 import YouTube from '$lib/components/markdown/YouTube.svelte';
+import Button from '$lib/components/markdown/Button.svelte';
+import Details from '$lib/components/markdown/Details.svelte';
 import type { MarkdownComponentDefinition } from './types';
 
 const calloutSchema = z.object({
@@ -59,6 +61,18 @@ const mediaSchema = z.object({
   title: z.string().min(1).optional()
 });
 
+const buttonSchema = z.object({
+  href: z.string().url(),
+  variant: z.enum(['primary', 'secondary']).default('primary'),
+  label: z.string().min(1)
+});
+
+const detailsSchema = z.object({
+  title: z.string().min(1),
+  open: z.enum(['true', 'false']).transform((value) => value === 'true').optional(),
+  content: z.string().min(1)
+});
+
 function textBody(body: string): string {
   return body.trim();
 }
@@ -72,7 +86,7 @@ function listBody(body: string): string[] {
     .filter(Boolean);
 }
 
-function parseWithSchema<Props>(schema: z.ZodType<Props>, value: unknown, name: string): Props {
+function parseWithSchema<Props>(schema: z.ZodType<Props, z.ZodTypeDef, unknown>, value: unknown, name: string): Props {
   const parsed = schema.safeParse(value);
 
   if (!parsed.success) {
@@ -161,6 +175,16 @@ export const markdownComponents = {
   youtube: {
     component: YouTube,
     parse: (attributes) => parseMedia(attributes, 'youtube')
+  },
+  button: {
+    component: Button,
+    parse: (attributes, body) =>
+      parseWithSchema(buttonSchema, { ...attributes, label: textBody(body) }, 'button')
+  },
+  details: {
+    component: Details,
+    parse: (attributes, body) =>
+      parseWithSchema(detailsSchema, { ...attributes, content: textBody(body) }, 'details')
   }
 } satisfies Record<string, MarkdownComponentDefinition<Record<string, unknown>>>;
 
