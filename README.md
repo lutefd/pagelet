@@ -81,6 +81,26 @@ Short description.
 - 10:00 Breakfast
 - 12:00 Museum
 ::
+
+::map{name="Japan House" address="Av. Paulista, 52" href="https://maps.google.com/?q=Japan+House"}
+::
+
+::event{title="Opening night" date="2026-07-18" time="19:00" timezone="BRT" location="Japan House" href="https://calendar.google.com/calendar/render?action=TEMPLATE"}
+::
+
+::spotify{href="https://open.spotify.com/playlist/37i9dQZF1DX4WYpdgoIcn6" title="Focus playlist"}
+::
+
+::youtube{href="https://youtu.be/dQw4w9WgXcQ" title="Demo video"}
+::
+
+::button{href="https://example.com/tickets" variant="primary"}
+Buy tickets
+::
+
+::details{title="Accessibility"}
+The venue has step-free access.
+::
 ```
 
 Unknown components or invalid props fail during development/build.

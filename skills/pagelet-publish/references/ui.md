@@ -86,6 +86,68 @@ Use for chronological schedules or sequences.
 ::
 ```
 
+### Map
+
+Use for a named place and a direct link to an external map. Prefer a canonical Google Maps,
+Apple Maps, or OpenStreetMap URL. Pagelet renders a place card rather than an interactive map.
+
+```md
+::map{name="Japan House" address="Av. Paulista, 52 — São Paulo" href="https://maps.google.com/?q=Japan+House"}
+::
+```
+
+### Event
+
+Use for a dated event. `date` must use `YYYY-MM-DD`. `time`, `timezone`, `location`, and an
+absolute calendar `href` are optional. Do not invent missing schedule details.
+
+```md
+::event{title="Opening night" date="2026-07-18" time="19:00" timezone="BRT" location="Japan House" href="https://calendar.google.com/calendar/render?action=TEMPLATE"}
+::
+```
+
+### Spotify
+
+Use for a Spotify track, album, artist, playlist, episode, or show. Pass its public
+`open.spotify.com` URL; Pagelet converts it into a lazy-loaded player.
+
+```md
+::spotify{href="https://open.spotify.com/playlist/37i9dQZF1DX4WYpdgoIcn6" title="Focus playlist"}
+::
+```
+
+### YouTube
+
+Use for a YouTube video or Short. Standard watch, short, embed, and `youtu.be` URLs are
+accepted and rendered through YouTube's privacy-enhanced domain.
+
+```md
+::youtube{href="https://youtu.be/dQw4w9WgXcQ" title="Demo video"}
+::
+```
+
+### Button
+
+Use for one prominent external action such as registering, buying tickets, or downloading.
+The body is the label. `variant` may be `primary` (the default) or `secondary`.
+
+```md
+::button{href="https://example.com/tickets" variant="primary"}
+Buy tickets
+::
+```
+
+### Details
+
+Use for optional supporting information such as FAQs or accessibility notes. The body is
+plain text. Set `open="true"` only when the content should initially be expanded.
+
+```md
+::details{title="Accessibility"}
+The venue has step-free access.
+::
+```
+
 ## Composition guidance
 
 - Prefer normal headings, paragraphs, lists, tables, quotes, and code fences for most content.
@@ -93,3 +155,4 @@ Use for chronological schedules or sequences.
 - Keep every component at the document root, separated by blank lines.
 - Do not place component syntax inside lists, blockquotes, or other components.
 - Do not use arbitrary Svelte components, JavaScript, inline event handlers, or unsanitized HTML.
+- Use media embeds sparingly; introduce the track or video in nearby prose so the page remains useful if the provider is unavailable.

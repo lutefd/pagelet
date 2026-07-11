@@ -1,6 +1,6 @@
 ---
 name: pagelet-publish
-description: Publish, update, inspect, and remove polished shareable Pagelet pages from Markdown through the Pagelet API. Use when a user asks an agent to publish or share Markdown, turn notes or a document into a hosted page, create a Pagelet, update an existing Pagelet URL, or compose content using Pagelet's callouts, cards, galleries, checklists, timelines, and link cards.
+description: Publish, update, inspect, and remove polished shareable Pagelet pages from Markdown through the Pagelet API. Use when a user asks an agent to publish or share Markdown, turn notes or a document into a hosted page, create a Pagelet, update an existing Pagelet URL, or compose content using Pagelet's callouts, cards, galleries, checklists, timelines, maps, events, actions, disclosures, and media embeds.
 ---
 
 # Publish with Pagelet
