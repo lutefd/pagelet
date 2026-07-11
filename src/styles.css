@@ -64,9 +64,9 @@ a {
   width: min(calc(100% - 28px), 1400px);
   margin: 14px auto 0;
   overflow: hidden;
-  color: var(--paper);
-  background: var(--ink);
-  border: 6px solid var(--paper);
+  color: var(--ink);
+  background: var(--paper);
+  border: 5px solid var(--ink);
   border-radius: 28px;
   box-shadow: 0 0 0 1px rgb(46 41 36 / 20%), 0 28px 70px rgb(66 47 31 / 18%);
 }
@@ -77,7 +77,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(22px, 5vw, 72px);
-  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  border-bottom: 1px solid rgb(46 41 36 / 12%);
 }
 
 .wordmark {
@@ -106,14 +106,14 @@ a {
 }
 
 .nav-links a {
-  color: #d7cec4;
+  color: #655b51;
   font-size: 0.88rem;
   font-weight: 650;
   text-decoration: none;
 }
 
 .nav-links a:hover {
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .hero-grid {
@@ -123,9 +123,9 @@ a {
   place-items: center;
   padding: 72px 22px 150px;
   background-image:
-    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px),
-    radial-gradient(circle at 50% 44%, rgb(231 120 85 / 10%), transparent 34%);
+    linear-gradient(rgb(46 41 36 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(46 41 36 / 6%) 1px, transparent 1px),
+    radial-gradient(circle at 50% 44%, rgb(231 120 85 / 18%), transparent 34%);
   background-size: 56px 56px, 56px 56px, 100% 100%;
 }
 
@@ -137,7 +137,7 @@ a {
 }
 
 .hero-copy .eyebrow {
-  color: #e9c7b5;
+  color: var(--cocoa);
 }
 
 .hero-copy h1,
@@ -161,16 +161,16 @@ a {
 .hero-lede {
   max-width: 680px;
   margin: 0 auto;
-  color: #c6bbb0;
+  color: #62594f;
   font-size: clamp(1.05rem, 2vw, 1.3rem);
   line-height: 1.65;
 }
 
 .hero-lede code {
   padding: 2px 7px;
-  color: var(--paper);
-  background: rgb(255 255 255 / 10%);
-  border: 1px solid rgb(255 255 255 / 12%);
+  color: var(--ink);
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
   border-radius: 7px;
 }
 
@@ -203,8 +203,8 @@ a {
 }
 
 .button-primary {
-  color: var(--ink);
-  background: var(--paper);
+  color: var(--paper);
+  background: var(--ink);
   box-shadow: 5px 5px 0 var(--coral);
 }
 
@@ -213,9 +213,9 @@ a {
 }
 
 .button-quiet {
-  color: #d8cec4;
-  background: rgb(255 255 255 / 6%);
-  border-color: rgb(255 255 255 / 12%);
+  color: var(--ink);
+  background: rgb(255 253 249 / 75%);
+  border-color: var(--line);
 }
 
 .dangly {
@@ -225,12 +225,12 @@ a {
   width: clamp(70px, 8vw, 108px);
   aspect-ratio: 1;
   place-items: center;
-  color: var(--paper);
+  color: var(--ink);
   font-weight: 900;
-  background: linear-gradient(145deg, #3d3732, #211e1b);
-  border: 1px solid rgb(255 255 255 / 14%);
+  background: var(--paper-deep);
+  border: 2px solid var(--ink);
   border-radius: 22px;
-  box-shadow: 0 22px 40px rgb(0 0 0 / 28%), inset 0 1px rgb(255 255 255 / 8%);
+  box-shadow: 7px 8px 0 var(--ink), 0 22px 40px rgb(66 47 31 / 16%);
 }
 
 .dangly::before {
@@ -240,17 +240,17 @@ a {
   width: 1px;
   height: 110px;
   content: "";
-  background: linear-gradient(transparent, rgb(255 255 255 / 30%));
+  background: linear-gradient(transparent, rgb(46 41 36 / 45%));
 }
 
 .dangly span {
   font-size: clamp(1.4rem, 3vw, 2.4rem);
 }
 
-.dangly-spark { top: 142px; left: 6%; color: var(--coral); transform: rotate(-9deg); }
-.dangly-code { top: 116px; right: 7%; color: #9bc3d6; transform: rotate(8deg); }
-.dangly-hash { right: 5%; bottom: 108px; color: var(--yellow); transform: rotate(-5deg); }
-.dangly-arrow { bottom: 122px; left: 7%; color: #b6cf8c; transform: rotate(7deg); }
+.dangly-spark { top: 142px; left: 6%; background: #f3a083; transform: rotate(-9deg); }
+.dangly-code { top: 116px; right: 7%; background: #a7c6d5; transform: rotate(8deg); }
+.dangly-hash { right: 5%; bottom: 108px; background: #efd178; transform: rotate(-5deg); }
+.dangly-arrow { bottom: 122px; left: 7%; background: #b7c995; transform: rotate(7deg); }
 
 .install-ribbon {
   position: absolute;
