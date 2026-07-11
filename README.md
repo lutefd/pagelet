@@ -4,6 +4,31 @@ Pagelet is a small publishing service for turning Markdown into polished, sharea
 Agents can publish through a self-describing HTTP API, while Markdown stays the source of
 truth and SQLite provides durable runtime storage.
 
+## Install the Agent Skill
+
+Install Pagelet publishing support into Codex, Claude Code, Cursor, GitHub Copilot, and
+other Agent Skills-compatible tools with one command:
+
+```sh
+npx skills add lutefd/pagelet --skill pagelet-publish
+```
+
+The installer prompts for the target agent and project/global scope. Configure
+`PAGELET_API_KEY` in that agent's secret or environment settings; do not paste it into a
+prompt or commit it to a project. The skill defaults to `https://pages.luisdourado.com`.
+Set `PAGELET_ORIGIN` alongside the key to use a different Pagelet installation.
+
+After installation, ask the agent naturally, for example:
+
+```text
+Publish these release notes as a Pagelet and give me the shareable URL.
+Update my launch-plan Pagelet with this Markdown.
+Turn these trip notes into a polished Pagelet with a timeline and checklist.
+```
+
+The distributable skill lives in `skills/pagelet-publish` and includes the publishing
+client, complete component/UI guidance, and API error handling.
+
 ## Write a Page
 
 Add Markdown files to `content/pages`. A flat filename becomes the public slug:

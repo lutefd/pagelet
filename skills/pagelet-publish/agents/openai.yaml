@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish with Pagelet"
+  short_description: "Publish polished Markdown pages from your agent"
+  default_prompt: "Use $pagelet-publish to turn my Markdown into a polished shareable page."
