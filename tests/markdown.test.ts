@@ -38,8 +38,47 @@ theme: default
   });
 
   it('rejects unknown components', async () => {
-    await expect(renderMarkdownDocument(`::map\nSomewhere\n::`)).rejects.toThrow(
-      'Unknown Markdown component ::map'
+    await expect(renderMarkdownDocument(`::carousel\nSomewhere\n::`)).rejects.toThrow(
+      'Unknown Markdown component ::carousel'
+    );
+  });
+
+  it('parses map and event components', async () => {
+    const blocks = await renderMarkdownDocument(`
+::map{name="Japan House" address="Av. Paulista, 52" href="https://maps.google.com/?q=Japan+House"}
+::
+
+::event{title="Opening night" date="2026-07-18" time="19:00" timezone="BRT" location="Japan House" href="https://calendar.google.com/calendar/render?action=TEMPLATE"}
+::
+`);
+
+    expect(blocks).toMatchObject([
+      {
+        kind: 'component',
+        name: 'map',
+        props: {
+          name: 'Japan House',
+          address: 'Av. Paulista, 52',
+          href: 'https://maps.google.com/?q=Japan+House'
+        }
+      },
+      {
+        kind: 'component',
+        name: 'event',
+        props: {
+          title: 'Opening night',
+          date: '2026-07-18',
+          time: '19:00',
+          timezone: 'BRT',
+          location: 'Japan House'
+        }
+      }
+    ]);
+  });
+
+  it('rejects malformed event dates', async () => {
+    await expect(renderMarkdownDocument(`::event{title="Launch" date="July 18"}\n::`)).rejects.toThrow(
+      'Invalid props for ::event'
     );
   });
 

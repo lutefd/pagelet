@@ -5,6 +5,8 @@
   import Gallery from '$lib/components/markdown/Gallery.svelte';
   import LinkCard from '$lib/components/markdown/LinkCard.svelte';
   import Timeline from '$lib/components/markdown/Timeline.svelte';
+  import Map from '$lib/components/markdown/Map.svelte';
+  import Event from '$lib/components/markdown/Event.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -38,6 +40,10 @@
         <Checklist {...(block.props as any)} storageKey={`pagelet:${data.page.slug}:checklist:${index}`} />
       {:else if block.name === 'timeline'}
         <Timeline {...(block.props as any)} />
+      {:else if block.name === 'map'}
+        <Map {...(block.props as any)} />
+      {:else if block.name === 'event'}
+        <Event {...(block.props as any)} />
       {:else}
         <p class="component-error">Unknown component: {block.name}</p>
       {/if}

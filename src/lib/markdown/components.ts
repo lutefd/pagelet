@@ -5,6 +5,8 @@ import Checklist from '$lib/components/markdown/Checklist.svelte';
 import Gallery from '$lib/components/markdown/Gallery.svelte';
 import LinkCard from '$lib/components/markdown/LinkCard.svelte';
 import Timeline from '$lib/components/markdown/Timeline.svelte';
+import Map from '$lib/components/markdown/Map.svelte';
+import Event from '$lib/components/markdown/Event.svelte';
 import type { MarkdownComponentDefinition } from './types';
 
 const calloutSchema = z.object({
@@ -33,6 +35,21 @@ const checklistSchema = z.object({
 
 const timelineSchema = z.object({
   items: z.array(z.string().min(1)).min(1)
+});
+
+const mapSchema = z.object({
+  name: z.string().min(1),
+  address: z.string().min(1),
+  href: z.string().url()
+});
+
+const eventSchema = z.object({
+  title: z.string().min(1),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must use YYYY-MM-DD'),
+  time: z.string().min(1).optional(),
+  timezone: z.string().min(1).optional(),
+  location: z.string().min(1).optional(),
+  href: z.string().url().optional()
 });
 
 function textBody(body: string): string {
@@ -92,6 +109,14 @@ export const markdownComponents = {
   timeline: {
     component: Timeline,
     parse: (_attributes, body) => parseWithSchema(timelineSchema, { items: listBody(body) }, 'timeline')
+  },
+  map: {
+    component: Map,
+    parse: (attributes) => parseWithSchema(mapSchema, attributes, 'map')
+  },
+  event: {
+    component: Event,
+    parse: (attributes) => parseWithSchema(eventSchema, attributes, 'event')
   }
 } satisfies Record<string, MarkdownComponentDefinition<Record<string, unknown>>>;
 
