@@ -7,6 +7,8 @@
   import Timeline from '$lib/components/markdown/Timeline.svelte';
   import Map from '$lib/components/markdown/Map.svelte';
   import Event from '$lib/components/markdown/Event.svelte';
+  import Spotify from '$lib/components/markdown/Spotify.svelte';
+  import YouTube from '$lib/components/markdown/YouTube.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -44,6 +46,10 @@
         <Map {...(block.props as any)} />
       {:else if block.name === 'event'}
         <Event {...(block.props as any)} />
+      {:else if block.name === 'spotify'}
+        <Spotify {...(block.props as any)} />
+      {:else if block.name === 'youtube'}
+        <YouTube {...(block.props as any)} />
       {:else}
         <p class="component-error">Unknown component: {block.name}</p>
       {/if}

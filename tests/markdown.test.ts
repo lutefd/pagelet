@@ -82,6 +82,44 @@ theme: default
     );
   });
 
+  it('normalizes supported Spotify and YouTube URLs', async () => {
+    const blocks = await renderMarkdownDocument(`
+::spotify{href="https://open.spotify.com/playlist/37i9dQZF1DX4WYpdgoIcn6" title="Focus playlist"}
+::
+
+::youtube{href="https://youtu.be/dQw4w9WgXcQ" title="Demo video"}
+::
+`);
+
+    expect(blocks).toMatchObject([
+      {
+        kind: 'component',
+        name: 'spotify',
+        props: {
+          embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DX4WYpdgoIcn6',
+          title: 'Focus playlist'
+        }
+      },
+      {
+        kind: 'component',
+        name: 'youtube',
+        props: {
+          embedUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+          title: 'Demo video'
+        }
+      }
+    ]);
+  });
+
+  it('rejects unsupported media URLs', async () => {
+    await expect(renderMarkdownDocument(`::spotify{href="https://example.com/song"}\n::`)).rejects.toThrow(
+      'Must be a supported spotify URL'
+    );
+    await expect(renderMarkdownDocument(`::youtube{href="https://example.com/video"}\n::`)).rejects.toThrow(
+      'Must be a supported youtube URL'
+    );
+  });
+
   it('rejects invalid component props', async () => {
     await expect(renderMarkdownDocument(`::callout{type="loud"}\nListen.\n::`)).rejects.toThrow(
       'Invalid props for ::callout'

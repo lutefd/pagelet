@@ -7,6 +7,8 @@ import LinkCard from '$lib/components/markdown/LinkCard.svelte';
 import Timeline from '$lib/components/markdown/Timeline.svelte';
 import Map from '$lib/components/markdown/Map.svelte';
 import Event from '$lib/components/markdown/Event.svelte';
+import Spotify from '$lib/components/markdown/Spotify.svelte';
+import YouTube from '$lib/components/markdown/YouTube.svelte';
 import type { MarkdownComponentDefinition } from './types';
 
 const calloutSchema = z.object({
@@ -52,6 +54,11 @@ const eventSchema = z.object({
   href: z.string().url().optional()
 });
 
+const mediaSchema = z.object({
+  href: z.string().url(),
+  title: z.string().min(1).optional()
+});
+
 function textBody(body: string): string {
   return body.trim();
 }
@@ -74,6 +81,35 @@ function parseWithSchema<Props>(schema: z.ZodType<Props>, value: unknown, name: 
   }
 
   return parsed.data;
+}
+
+function spotifyEmbedUrl(href: string): string | undefined {
+  const url = new URL(href);
+  const match = url.pathname.match(/^\/(track|album|artist|playlist|episode|show)\/([A-Za-z0-9]+)\/?$/);
+
+  if (url.hostname !== 'open.spotify.com' || !match) return undefined;
+  return `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
+}
+
+function youtubeEmbedUrl(href: string): string | undefined {
+  const url = new URL(href);
+  let id: string | undefined;
+
+  if (url.hostname === 'youtu.be') id = url.pathname.split('/').filter(Boolean)[0];
+  if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
+    id = url.pathname === '/watch' ? url.searchParams.get('v') ?? undefined : url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1];
+  }
+
+  if (!id || !/^[A-Za-z0-9_-]{6,}$/.test(id)) return undefined;
+  return `https://www.youtube-nocookie.com/embed/${id}`;
+}
+
+function parseMedia(attributes: Record<string, unknown>, name: 'spotify' | 'youtube') {
+  const media = parseWithSchema(mediaSchema, attributes, name);
+  const embedUrl = name === 'spotify' ? spotifyEmbedUrl(media.href) : youtubeEmbedUrl(media.href);
+
+  if (!embedUrl) throw new Error(`Invalid props for ::${name}: href: Must be a supported ${name} URL`);
+  return { embedUrl, title: media.title };
 }
 
 export const markdownComponents = {
@@ -117,6 +153,14 @@ export const markdownComponents = {
   event: {
     component: Event,
     parse: (attributes) => parseWithSchema(eventSchema, attributes, 'event')
+  },
+  spotify: {
+    component: Spotify,
+    parse: (attributes) => parseMedia(attributes, 'spotify')
+  },
+  youtube: {
+    component: YouTube,
+    parse: (attributes) => parseMedia(attributes, 'youtube')
   }
 } satisfies Record<string, MarkdownComponentDefinition<Record<string, unknown>>>;
 
