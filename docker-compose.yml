@@ -36,7 +36,14 @@ services:
     depends_on:
       pagelet:
         condition: service_healthy
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
+    # Recommended: read the token from the root-owned file declared under `secrets` below.
+    command: tunnel --no-autoupdate run --token-file /run/secrets/cloudflared_token
+    secrets:
+      - cloudflared_token
+    # Less secure alternative: remove `secrets` above, comment the token-file command,
+    # and use the command below with CLOUDFLARED_TOKEN set in your ignored `.env` file.
+    # The token will then be visible in the container configuration via `docker inspect`.
+    # command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN:?set CLOUDFLARED_TOKEN in .env}
     networks:
       - pagelet-internal
       - tunnel-egress
@@ -45,6 +52,10 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+
+secrets:
+  cloudflared_token:
+    file: /etc/pagelet/cloudflared-token
 
 volumes:
   pagelet-data:

@@ -112,7 +112,7 @@ pnpm build
 pnpm serve
 ```
 
-The production static server listens on `0.0.0.0:3000`.
+The production Node server listens on `0.0.0.0:3000`.
 
 ## Docker
 
@@ -131,10 +131,41 @@ separate egress network so it can connect to Cloudflare without placing Pagelet 
 network.
 
 In Cloudflare Zero Trust, create a remotely managed tunnel and add exactly one public
-hostname whose service is `http://pagelet:3000`. Copy `.env.example` to `.env` and set:
+hostname whose service is `http://pagelet:3000`.
+
+### Store the tunnel token
+
+The default Compose configuration reads the tunnel token from a Docker Compose secret
+backed by a root-owned file. Create it outside the repository so it cannot be committed:
 
 ```sh
-CLOUDFLARED_TOKEN=your-token
+sudo install -d -m 700 /etc/pagelet
+sudo install -m 600 /dev/null /etc/pagelet/cloudflared-token
+sudoedit /etc/pagelet/cloudflared-token
+```
+
+Paste only the `eyJ...` tunnel token into the editor. Avoid putting it directly in a shell
+command, where it may be saved in shell history. Verify the ownership and permissions
+without printing its contents:
+
+```sh
+sudo stat /etc/pagelet/cloudflared-token
+```
+
+The file should be owned by `root`, with mode `0600`. Compose mounts it read-only inside
+the `cloudflared` container at `/run/secrets/cloudflared_token`; `cloudflared` reads it via
+`--token-file`, so the token does not appear in the container command or environment.
+
+For a simpler but less secure setup, `docker-compose.yml` includes a commented alternative
+that reads `CLOUDFLARED_TOKEN` from `.env`. To use it, follow the comments in the
+`cloudflared` service. The repository ignores `.env`, but the expanded token remains
+visible to privileged users through `docker inspect`.
+
+### Configure and deploy
+
+Copy `.env.example` to `.env` and set the Pagelet values:
+
+```sh
 PAGELET_API_KEY=a-long-random-publishing-secret
 PAGELET_ORIGIN=https://pages.example.com
 ```
@@ -152,7 +183,15 @@ docker compose ps
 docker compose logs --tail=100 pagelet cloudflared
 ```
 
+You can also confirm that Compose resolved the secret mount without displaying its value:
+
+```sh
+docker compose config
+```
+
 The named `pagelet-data` volume holds the SQLite database. Back it up while the service is
 stopped, or use SQLite's online backup tooling. Never expose port 3000 with a Compose
 `ports` entry; all public traffic should enter through the tunnel. Rotate both the tunnel
-token and publishing key if either is disclosed.
+token and publishing key if either is disclosed. If the tunnel token leaks, rotate it in
+Cloudflare Zero Trust, replace `/etc/pagelet/cloudflared-token`, recreate the `cloudflared`
+container, and disconnect any old tunnel connections from the Cloudflare dashboard.
