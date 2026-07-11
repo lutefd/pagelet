@@ -7,11 +7,12 @@
     "dev": "vite dev",
     "build": "svelte-kit sync && vite build",
     "preview": "vite preview",
-    "serve": "sirv build --host 0.0.0.0 --port 3000",
+    "serve": "HOST=0.0.0.0 PORT=3000 node build",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run"
   },
   "dependencies": {
+    "@shikijs/rehype": "^1.29.2",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.22.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
@@ -27,7 +28,6 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.1",
-    "@shikijs/rehype": "^1.29.2",
     "shiki": "^1.29.2",
     "sirv-cli": "^3.0.1",
     "svelte": "^5.0.0",
@@ -37,6 +37,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@sveltejs/adapter-node": "^5.5.7",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.10.5",
     "jsdom": "^25.0.1",

@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import { z } from 'zod';
 import { renderMarkdownDocument } from './render';
 import type { PageMeta, PageSummary, RenderedPage } from './types';
+import { getStoredPage, listStoredPages } from '$lib/server/database';
 
 const contentDirectory = join(process.cwd(), 'content', 'pages');
 
@@ -26,16 +27,24 @@ export async function listPages(): Promise<PageSummary[]> {
   const slugs = await listPageSlugs();
   const pages = await Promise.all(slugs.map((slug) => readPageSource(slug)));
 
-  return pages.map(({ slug, meta }) => ({
+  const filePages: PageSummary[] = pages.map(({ slug, meta }) => ({
     slug,
     title: meta.title,
     description: meta.description
   }));
+  const merged = new Map(filePages.map((page) => [page.slug, page]));
+  for (const page of listStoredPages()) merged.set(page.slug, page);
+  return [...merged.values()].sort((a, b) => a.title.localeCompare(b.title));
 }
 
 export async function loadPage(slug: string): Promise<RenderedPage | null> {
   if (!isFlatSlug(slug)) {
     return null;
+  }
+
+  const stored = getStoredPage(slug);
+  if (stored) {
+    return { slug, meta: stored.meta, blocks: await renderMarkdownDocument(stored.body) };
   }
 
   try {
@@ -54,15 +63,19 @@ export async function loadPage(slug: string): Promise<RenderedPage | null> {
   }
 }
 
+export function parsePageSource(markdown: string): { meta: PageMeta; body: string } {
+  const parsed = matter(markdown);
+  return { meta: frontmatterSchema.parse(parsed.data), body: parsed.content };
+}
+
 async function readPageSource(slug: string): Promise<{ slug: string; meta: PageMeta; body: string }> {
   const raw = await readFile(join(contentDirectory, `${slug}.md`), 'utf8');
-  const parsed = matter(raw);
-  const meta = frontmatterSchema.parse(parsed.data);
+  const { meta, body } = parsePageSource(raw);
 
   return {
     slug,
     meta,
-    body: parsed.content
+    body
   };
 }
 
