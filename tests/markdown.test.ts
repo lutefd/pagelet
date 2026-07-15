@@ -120,6 +120,35 @@ theme: default
     );
   });
 
+  it('parses a direct video player with optional presentation and caption props', async () => {
+    const blocks = await renderMarkdownDocument(`
+::video{src="https://cdn.example.com/launch.mp4" poster="https://cdn.example.com/poster.jpg" title="Launch film" caption="A short launch film." captions="https://cdn.example.com/launch.vtt" captionsLang="en" captionsLabel="English"}
+::
+`);
+
+    expect(blocks).toMatchObject([
+      {
+        kind: 'component',
+        name: 'video',
+        props: {
+          src: 'https://cdn.example.com/launch.mp4',
+          poster: 'https://cdn.example.com/poster.jpg',
+          title: 'Launch film',
+          caption: 'A short launch film.',
+          captions: 'https://cdn.example.com/launch.vtt',
+          captionsLang: 'en',
+          captionsLabel: 'English'
+        }
+      }
+    ]);
+  });
+
+  it('requires a valid direct video URL', async () => {
+    await expect(renderMarkdownDocument(`::video{src="not-a-url"}\n::`)).rejects.toThrow(
+      'Invalid props for ::video'
+    );
+  });
+
   it('parses button and details components', async () => {
     const blocks = await renderMarkdownDocument(`
 ::button{href="https://example.com/tickets" variant="secondary"}

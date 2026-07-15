@@ -9,6 +9,7 @@
   import Event from '$lib/components/markdown/Event.svelte';
   import Spotify from '$lib/components/markdown/Spotify.svelte';
   import YouTube from '$lib/components/markdown/YouTube.svelte';
+  import Video from '$lib/components/markdown/Video.svelte';
   import Button from '$lib/components/markdown/Button.svelte';
   import Details from '$lib/components/markdown/Details.svelte';
   import type { PageData } from './$types';
@@ -52,6 +53,8 @@
         <Spotify {...(block.props as any)} />
       {:else if block.name === 'youtube'}
         <YouTube {...(block.props as any)} />
+      {:else if block.name === 'video'}
+        <Video {...(block.props as any)} />
       {:else if block.name === 'button'}
         <Button {...(block.props as any)} />
       {:else if block.name === 'details'}

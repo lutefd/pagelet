@@ -9,6 +9,7 @@ import Map from '$lib/components/markdown/Map.svelte';
 import Event from '$lib/components/markdown/Event.svelte';
 import Spotify from '$lib/components/markdown/Spotify.svelte';
 import YouTube from '$lib/components/markdown/YouTube.svelte';
+import Video from '$lib/components/markdown/Video.svelte';
 import Button from '$lib/components/markdown/Button.svelte';
 import Details from '$lib/components/markdown/Details.svelte';
 import type { MarkdownComponentDefinition } from './types';
@@ -59,6 +60,16 @@ const eventSchema = z.object({
 const mediaSchema = z.object({
   href: z.string().url(),
   title: z.string().min(1).optional()
+});
+
+const videoSchema = z.object({
+  src: z.string().url(),
+  poster: z.string().url().optional(),
+  title: z.string().min(1).optional(),
+  caption: z.string().min(1).optional(),
+  captions: z.string().url().optional(),
+  captionsLang: z.string().min(2).optional(),
+  captionsLabel: z.string().min(1).optional()
 });
 
 const buttonSchema = z.object({
@@ -175,6 +186,10 @@ export const markdownComponents = {
   youtube: {
     component: YouTube,
     parse: (attributes) => parseMedia(attributes, 'youtube')
+  },
+  video: {
+    component: Video,
+    parse: (attributes) => parseWithSchema(videoSchema, attributes, 'video')
   },
   button: {
     component: Button,
