@@ -25,8 +25,9 @@ agent's secret settings or ignored `.env` and stop before publishing.
 2. Add YAML frontmatter with a concise `title`, optional `description`, and `theme: default`.
 3. Use ordinary GitHub-flavored Markdown by default.
 4. Add Pagelet components only when they materially improve scanning or interaction. Read [references/ui.md](references/ui.md) before using components.
-5. Use absolute HTTPS image URLs for remotely accessible galleries. Do not invent URLs or upload assets implicitly.
-6. Save the complete source to a temporary or user-designated `.md` file.
+5. Use absolute HTTPS image URLs for remotely accessible galleries. Do not invent URLs.
+6. When the user asks to publish local or attached images, use the `r2-image-upload` skill when available, then verify and embed its returned URLs. Never expose storage credentials or upload to an unrelated third-party host without explicit approval.
+7. Save the complete source to a temporary or user-designated `.md` file.
 
 Minimum valid document:
 
