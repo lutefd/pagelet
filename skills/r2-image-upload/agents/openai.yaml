@@ -1,0 +1,4 @@
+interface:
+  display_name: "Upload Images to R2"
+  short_description: "Upload local images safely to Cloudflare R2"
+  default_prompt: "Use $r2-image-upload to upload these local images and return their public HTTPS URLs."
