@@ -126,6 +126,19 @@ accepted and rendered through YouTube's privacy-enhanced domain.
 ::
 ```
 
+### Video
+
+Use for a direct video file such as an MP4 or WebM hosted at a public URL. Pagelet renders a
+lightweight custom player with play, replay, seek, speed, mute, volume, and fullscreen controls.
+`poster`, `title`, and the visible `caption` are optional. For accessibility, provide a WebVTT
+`captions` URL when one is available; `captionsLang` defaults to `en` and `captionsLabel` defaults
+to `Captions`.
+
+```md
+::video{src="https://cdn.example.com/film.mp4" poster="https://cdn.example.com/poster.jpg" title="Launch film" caption="A short launch film." captions="https://cdn.example.com/film.vtt" captionsLang="en" captionsLabel="English"}
+::
+```
+
 ### Button
 
 Use for one prominent external action such as registering, buying tickets, or downloading.
