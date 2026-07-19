@@ -31,7 +31,10 @@ const linkCardSchema = z.object({
 });
 
 const gallerySchema = z.object({
-  images: z.array(z.string().min(1)).min(1)
+  images: z.array(z.string().min(1)).min(1),
+  fit: z.enum(['cover', 'contain']).default('cover'),
+  aspect: z.enum(['landscape', 'square', 'portrait', 'natural']).default('landscape'),
+  size: z.enum(['full', 'medium', 'small']).default('full')
 });
 
 const checklistSchema = z.object({
@@ -161,7 +164,8 @@ export const markdownComponents = {
   },
   gallery: {
     component: Gallery,
-    parse: (_attributes, body) => parseWithSchema(gallerySchema, { images: listBody(body) }, 'gallery')
+    parse: (attributes, body) =>
+      parseWithSchema(gallerySchema, { ...attributes, images: listBody(body) }, 'gallery')
   },
   checklist: {
     component: Checklist,

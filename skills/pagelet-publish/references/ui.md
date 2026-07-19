@@ -61,6 +61,17 @@ Use for one or more images. Each list item is used directly as an image URL; Pag
 ::
 ```
 
+By default, gallery images use a cropped `4:3` landscape frame. Set `fit="contain"` to keep
+the full image inside a fixed frame. Set `aspect` to `square`, `portrait`, or `natural` when
+the image shape should differ. `natural` preserves each image's intrinsic aspect ratio. Set
+`size` to `medium` or `small` to constrain the gallery width. The default size is `full`.
+
+```md
+::gallery{fit="contain" aspect="natural" size="medium"}
+- https://example.com/portrait.jpg
+::
+```
+
 ### Checklist
 
 Use for reader-actionable tasks. Check state is interactive and stored locally in that reader's browser for the specific page and block position.

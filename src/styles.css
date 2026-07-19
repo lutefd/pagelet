@@ -656,12 +656,40 @@ a {
   gap: 12px;
 }
 
+.gallery[data-size='medium'] {
+  width: min(100%, 720px);
+  margin-inline: auto;
+}
+
+.gallery[data-size='small'] {
+  width: min(100%, 480px);
+  margin-inline: auto;
+}
+
 .gallery img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #e6dac8;
+}
+
+.gallery[data-aspect='square'] img {
+  aspect-ratio: 1;
+}
+
+.gallery[data-aspect='portrait'] img {
+  aspect-ratio: 3 / 4;
+}
+
+.gallery[data-aspect='natural'] img {
+  height: auto;
+  aspect-ratio: auto;
+}
+
+.gallery[data-fit='contain'] img {
+  object-fit: contain;
+  background: #f4eee4;
 }
 
 .checklist,

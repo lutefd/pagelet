@@ -207,7 +207,7 @@ The venue has step-free access.
       {
         kind: 'component',
         name: 'gallery',
-        props: { images: ['/a.jpg', '/b.jpg'] }
+        props: { images: ['/a.jpg', '/b.jpg'], fit: 'cover', aspect: 'landscape', size: 'full' }
       },
       {
         kind: 'component',
@@ -220,5 +220,29 @@ The venue has step-free access.
         props: { items: ['10:00 Breakfast', '12:00 Museum'] }
       }
     ]);
+  });
+
+  it('parses controlled gallery image layout options', async () => {
+    const blocks = await renderMarkdownDocument(`
+::gallery{fit="contain" aspect="natural" size="medium"}
+- /portrait.jpg
+::
+`);
+
+    expect(blocks[0]).toMatchObject({
+      kind: 'component',
+      name: 'gallery',
+      props: { images: ['/portrait.jpg'], fit: 'contain', aspect: 'natural', size: 'medium' }
+    });
+  });
+
+  it('rejects unsupported gallery image layout options', async () => {
+    await expect(
+      renderMarkdownDocument(`
+::gallery{fit="stretch" aspect="cinema" size="giant"}
+- /a.jpg
+::
+`)
+    ).rejects.toThrow('Invalid props for ::gallery');
   });
 });
