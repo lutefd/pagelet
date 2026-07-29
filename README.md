@@ -173,44 +173,25 @@ docker run --rm -p 3000:3000 pagelet
 
 ## Production Deployment with Cloudflare Tunnel
 
-The Compose stack intentionally publishes no host ports. Pagelet sits on an internal
-Docker network and only its paired `cloudflared` container can reach it. The tunnel has a
-separate egress network so it can connect to Cloudflare without placing Pagelet on that
-network.
+The Compose stack intentionally publishes no host ports. Pagelet joins the external,
+server-wide `cloudflare_ingress` Docker network, where the independently managed
+`cloudflared` connector can reach it at `http://pagelet:3000`.
 
-In Cloudflare Zero Trust, create a remotely managed tunnel and add exactly one public
-hostname whose service is `http://pagelet:3000`.
+The tunnel is infrastructure shared by multiple home-server applications and is not owned
+by this repository. In Cloudflare Zero Trust, add a public hostname whose service is
+`http://pagelet:3000`.
 
-### Store the tunnel token
+### Create the ingress network
 
-The default Compose configuration reads the tunnel token from a Docker Compose secret
-backed by a root-owned file. Create it outside the repository so it cannot be committed:
-
-```sh
-sudo install -d -m 700 /etc/pagelet
-sudo install -m 600 /dev/null /etc/pagelet/cloudflared-token
-sudoedit /etc/pagelet/cloudflared-token
-```
-
-Paste only the `eyJ...` tunnel token into the editor. Avoid putting it directly in a shell
-command, where it may be saved in shell history. Verify the ownership and permissions
-without printing its contents:
+Create the shared internal network once, before starting Pagelet:
 
 ```sh
-sudo stat /etc/pagelet/cloudflared-token
+docker network create --driver bridge --internal cloudflare_ingress
 ```
 
-The file should be owned by `root`, with mode `0600`. Compose mounts it read-only inside
-the `cloudflared` container at `/run/secrets/cloudflared_token`; `cloudflared` reads it via
-`--token-file`, so the token does not appear in the container command or environment.
-File-backed Compose secrets preserve the host file's ownership, so the cloudflared
-container runs as container root to read it. Its filesystem remains read-only, all Linux
-capabilities are dropped, and `no-new-privileges` remains enabled.
-
-For a simpler but less secure setup, `docker-compose.yml` includes a commented alternative
-that reads `CLOUDFLARED_TOKEN` from `.env`. To use it, follow the comments in the
-`cloudflared` service. The repository ignores `.env`, but the expanded token remains
-visible to privileged users through `docker inspect`.
+The network is marked `internal`; the standalone tunnel connector uses its own separate
+egress network for Cloudflare connectivity. Manage the connector and its token in the
+server infrastructure project rather than in Pagelet.
 
 ### Configure and deploy
 
@@ -231,18 +212,11 @@ Check the health endpoint and logs through Docker:
 
 ```sh
 docker compose ps
-docker compose logs --tail=100 pagelet cloudflared
+docker compose logs --tail=100 pagelet
 ```
 
-You can also confirm that Compose resolved the secret mount without displaying its value:
-
-```sh
-docker compose config
-```
-
-The named `pagelet-data` volume holds the SQLite database. Back it up while the service is
-stopped, or use SQLite's online backup tooling. Never expose port 3000 with a Compose
-`ports` entry; all public traffic should enter through the tunnel. Rotate both the tunnel
-token and publishing key if either is disclosed. If the tunnel token leaks, rotate it in
-Cloudflare Zero Trust, replace `/etc/pagelet/cloudflared-token`, recreate the `cloudflared`
-container, and disconnect any old tunnel connections from the Cloudflare dashboard.
+The explicitly named `pagelet_pagelet-data` volume holds the SQLite database and remains
+stable even if the Compose project or directory is renamed. Back it up while the service
+is stopped, or use SQLite's online backup tooling. Never expose port 3000 with a Compose
+`ports` entry; all public traffic should enter through the tunnel. Rotate the publishing
+key if it is disclosed.
